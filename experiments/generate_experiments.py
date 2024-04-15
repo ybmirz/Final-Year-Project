@@ -78,6 +78,12 @@ FRQI_4x4_params = {
     "stride": 2
 }
 
+SCMFRQI_2x2_params = {
+    "encoder": "SCMFRQI_for_2x2",
+    "filter_length": 2,
+    "out_channels": 3,  # depends on the encoding
+}
+
 
 trainables = [True, False]
 
@@ -86,6 +92,7 @@ encoders = {
         TRESHOLD_2x2_params,
         NEQR_2x2_params,
         FRQI_2x2_params,
+        SCMFRQI_2x2_params
     ],
 
     "4x4": [
