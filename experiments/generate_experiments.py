@@ -89,10 +89,10 @@ trainables = [True, False]
 
 encoders = {
     "2x2": [
+        SCMFRQI_2x2_params,
         TRESHOLD_2x2_params,
         NEQR_2x2_params,
         FRQI_2x2_params,
-        SCMFRQI_2x2_params
     ],
 
     "4x4": [
@@ -104,14 +104,19 @@ encoders = {
 
 seeds = list(range(10))
 
+encoders_miru = {
+    "2x2": [
+        SCMFRQI_2x2_params,
+    ]
+}
 
 
 for seed in seeds:
-    for key in encoders.keys():
+    for key in encoders_miru.keys():
 
         experiments = {}
 
-        for encoder in encoders[key]:
+        for encoder in encoders_miru[key]:
             for trainable in trainables:
 
                 params = hyper_params.copy()

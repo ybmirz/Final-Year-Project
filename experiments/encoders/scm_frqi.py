@@ -22,6 +22,16 @@ class SCMFRQI_for_2x2(CircuitComponents):
         img = torch.asin(img)
         return img
 
+    def reset_gate(self, wires):
+        """
+        Implement the reset gate using a QubitUnitary operation.
+        """
+        reset_matrix = np.array([[1, 0, 0, 0],
+                                [0, 1, 0, 0],
+                                [0, 0, 0, 1],
+                                [0, 0, 1, 0]])
+        qml.QubitUnitary(reset_matrix, wires=wires)
+
     def circuit(self, inputs):
         angles = self.img_to_theta(inputs)
         qubits = list(range(self.n_qubits))
@@ -39,10 +49,11 @@ class SCMFRQI_for_2x2(CircuitComponents):
                 qml.PauliX(qubits[1])
 
             # Connect the pixel value and position using the reset gate
-            qml.Reset(wires=qubits[3])
-            for j in range(2):
-                qml.CNOT(control=j, target=qubits[3])
-            qml.CNOT(control=qubits[3], target=qubits[3])
+            self.reset_gate(wires=[qubits[2], qubits[3]])
+            qml.CNOT(wires=[qubits[0], qubits[2]])
+            qml.CNOT(wires=[qubits[1], qubits[3]])
+            qml.CNOT(wires=[qubits[2], qubits[2]])
+            qml.CNOT(wires=[qubits[3], qubits[3]])
 
             # Apply the controlled rotation
             qml.CRY(2 * theta, wires=[qubits[2], qubits[3]])
@@ -84,6 +95,21 @@ class SCMFRQI_for_4x4(CircuitComponents):
         result = np.array(list(bitstring)).astype(bool)
         return result
 
+    def reset_gate(self, wires):
+        """
+        Implement the reset gate using a QubitUnitary operation.
+        """
+        reset_matrix = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 1, 0, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 1, 0, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 1, 0, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 1, 0],
+                                [0, 0, 0, 0, 0, 0, 1, 0, 0],
+                                [0, 0, 0, 0, 0, 1, 0, 0, 0],
+                                [0, 0, 0, 0, 1, 0, 0, 0, 0],
+                                [0, 0, 0, 0, 0, 0, 0, 0, 1]])
+        qml.QubitUnitary(reset_matrix, wires=wires)
+
     def circuit(self, inputs):
         angles = self.img_to_theta(inputs)
 
@@ -106,10 +132,10 @@ class SCMFRQI_for_4x4(CircuitComponents):
                     qml.PauliX(wires=self.control_qubits[p])
 
             # Connect the pixel value and position using the reset gate
-            qml.Reset(wires=self.work_qubits[3])
+            self.reset_gate(wires=[self.work_qubits[3], self.color_qubit])
             for j in range(4):
-                qml.CNOT(control=self.control_qubits[j], target=self.work_qubits[3])
-            qml.CNOT(control=self.work_qubits[3], target=self.work_qubits[3])
+                qml.CNOT(wires=[self.control_qubits[j], self.work_qubits[3]])
+            qml.CNOT(wires=[self.work_qubits[3], self.work_qubits[3]])
 
             # Apply the controlled rotation
             qml.CRY(2 * theta, wires=[self.work_qubits[3], self.color_qubit])

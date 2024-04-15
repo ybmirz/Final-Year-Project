@@ -1,4 +1,4 @@
-Cython
+Cython==0.29.21
 jupyter
 numpy
 pandas<=1.2.3
@@ -7,7 +7,7 @@ pandas<=1.2.3
 #torch==1.8.1+cpu
 torchvision==0.9.1
 
-PennyLane
+pennylane==0.14.1
 
 qulacs-gpu
 PennyLane-qulacs
