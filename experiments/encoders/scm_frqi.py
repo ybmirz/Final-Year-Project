@@ -32,36 +32,98 @@ class SCMFRQI_for_2x2(CircuitComponents):
                                 [0, 0, 1, 0]])
         qml.QubitUnitary(reset_matrix, wires=wires)
 
+    def prepare_pixel_value(pixel_value, wires):
+        """
+        Prepares the quantum state representing the pixel value.
+        
+        Args:
+            wires (list): The wires on which to apply the gates.
+        """
+        # Prepare the pixel value
+        for i in range(len(wires)):
+            if (pixel_value >> i) & 1:
+                qml.X(wires=wires[i])
+
+    def prepare_pixel_position(x, y, wires, wires_aux):
+        """
+        Prepares the quantum state representing the pixel position.
+        
+        Args:
+            x (int): The x-coordinate of the pixel.
+            y (int): The y-coordinate of the pixel.
+            wires (list): The wires on which to apply the gates.
+            wires_aux (int): The auxiliary wire.
+        """
+        # Prepare the x-coordinate
+        for i in range(len(wires)):
+            if (x >> i) & 1:
+                qml.CNOT(wires=[wires[i], wires_aux])
+        
+        # Prepare the y-coordinate
+        for i in range(len(wires)):
+            if (y >> i) & 1:
+                qml.CNOT(wires=[wires[i], wires_aux])
+        
+        # Apply the Toffoli gate
+        qml.Toffoli(wires=[wires[0], wires[1], wires_aux])
+
+
     def circuit(self, inputs):
-        angles = self.img_to_theta(inputs)
-        qubits = list(range(self.n_qubits))
+        # angles = self.img_to_theta(inputs)
+        # qubits = list(range(self.n_qubits))
 
-        ### ENCODING ###
+        # ### ENCODING ###
 
-        # Apply Hadamard gates to the position qubits
-        for qubit in qubits[:-1]:
-            qml.Hadamard(wires=qubit)
+        # # Apply Hadamard gates to the position qubits
+        # for qubit in qubits[:-1]:
+        #     qml.Hadamard(wires=qubit)
 
-        for i, theta in enumerate(angles):
-            # Flip bits to encode pixel position
-            qml.PauliX(qubits[0])
-            if i % 2 == 0:  # First in a row
-                qml.PauliX(qubits[1])
+        # for i, theta in enumerate(angles):
+        #     # Flip bits to encode pixel position
+        #     qml.PauliX(qubits[0])
+        #     if i % 2 == 0:  # First in a row
+        #         qml.PauliX(qubits[1])
 
-            # Connect the pixel value and position using the reset gate
-            self.reset_gate(wires=[qubits[2], qubits[3]])
-            qml.CNOT(wires=[qubits[0], qubits[2]])
-            qml.CNOT(wires=[qubits[1], qubits[3]])
-            qml.CNOT(wires=[qubits[2], qubits[2]])
-            qml.CNOT(wires=[qubits[3], qubits[3]])
+        #     # Connect the pixel value and position using the reset gate
+        #     self.reset_gate(wires=[qubits[2], qubits[3]])
+        #     qml.CNOT(wires=[qubits[0], qubits[2]])
+        #     qml.CNOT(wires=[qubits[1], qubits[3]])
+        #     #qml.CNOT(wires=[qubits[2], qubits[2]])
+        #     #qml.CNOT(wires=[qubits[3], qubits[3]])
 
-            # Apply the controlled rotation
-            qml.CRY(2 * theta, wires=[qubits[2], qubits[3]])
+        #     # Apply the controlled rotation
+        #     qml.CRY(2 * theta, wires=[qubits[2], qubits[3]])
 
-            # Reset the pixel value qubits
-            for j in range(2):
-                if (i >> j) & 1:
-                    qml.PauliX(wires=j)
+        #     # Reset the pixel value qubits
+        #     for j in range(2):
+        #         if (i >> j) & 1:
+        #             qml.PauliX(wires=j)
+
+        # Get the shape of the image
+        
+        height, width = inputs.shape
+
+        n = int(np.log2(max(height, width)))
+        q = 8
+        
+        # Define the number of qubits needed
+        num_qubits = q + 2 * n + 1
+         # Initialize the quantum state to |0>^(q+2n+1)
+        for wire in range(num_qubits):
+            qml.Hadamard(wires=wire)
+        
+        # Prepare the pixel values
+        for y in range(height):
+            for x in range(width):
+                # Prepare the pixel value
+                pixel_value = inputs[y, x]
+                self.prepare_pixel_value(pixel_value= pixel_value, wires=[q + i for i in range(q)])
+                
+                # Prepare the pixel position
+                self.prepare_pixel_position(x, y, wires=[q + q + i for i in range(n)], wires_aux=q + 2 * n)
+                
+                # Apply the reset gate
+                qml.RX(np.pi, wires=q + 2 * n)
 
 class SCMFRQI_for_4x4(CircuitComponents):
     """
