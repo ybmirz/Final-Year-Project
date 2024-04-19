@@ -14,11 +14,24 @@ class EFRQI(CircuitComponents):
 
     def circuit(self, inputs):
         print(inputs.shape)
+        inputs = inputs.view(2,2)
+        H,W = inputs.shape
         self.n = max(math.ceil(math.log2(inputs)), math.ceil(math.log2(W)))
         self.required_qubits = self.n * 2 + 1
 
         for wire in range(2*self.n):
-             qml.Hadamard(wires=wire)
+            qml.Hadamard(wires=wire)
+
+        for y in range(H):
+            for x in range(W):
+                pixel_value = inputs[y, x].item()
+                if pixel_value > 0:
+                    qml.RX(pixel_value/255*np.pi/2, wires=2*self.n)
+                else:
+                    qml.RX(0, wires=2*self.n)
+
+                for i in range(2*self.n):
+                    qml.CNOT(wires=[i, 2*self.n])
 
         
 
