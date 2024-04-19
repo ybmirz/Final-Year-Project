@@ -4,7 +4,7 @@ services:
   experiments:
     build: .
     ports:
-      - 127.0.0.1:6006:6006
+      - 127.0.0.1:6007:6006
     command: supervisord -n -c /etc/supervisor/supervisord.conf
     volumes:
       - ./experiments/save:/experiments/save

@@ -65,7 +65,7 @@ class SCMFRQI_for_2x2(CircuitComponents):
                 qml.CNOT(wires=[wires[i], wires_aux])
         
         # Apply the Toffoli gate
-        qml.Toffoli(wires=[wires[0], wires[1], wires_aux])
+        qml.Toffoli(wires=[wires[0], 1, wires_aux])
 
 
     def circuit(self, inputs):
@@ -100,6 +100,7 @@ class SCMFRQI_for_2x2(CircuitComponents):
         #             qml.PauliX(wires=j)
 
         # Get the shape of the image
+        inputs = inputs.view(2,2)
         height, width = inputs.shape
 
         n = int(np.log2(max(height, width)))
@@ -115,8 +116,9 @@ class SCMFRQI_for_2x2(CircuitComponents):
         for y in range(height):
             for x in range(width):
                 # Prepare the pixel value
-                pixel_value = inputs[y, x]
-                self.prepare_pixel_value(pixel_value= pixel_value, wires=[q + i for i in range(q)])
+                pixel_value = inputs[y, x].item()
+                print(f"Pixel value: {pixel_value}")
+                self.prepare_pixel_value(pixel_value= int(pixel_value), wires=[q + i for i in range(q)])
                 
                 # Prepare the pixel position
                 self.prepare_pixel_position(x, y, wires=[q + q + i for i in range(n)], wires_aux=q + 2 * n)
