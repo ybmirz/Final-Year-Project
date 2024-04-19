@@ -100,7 +100,6 @@ class SCMFRQI_for_2x2(CircuitComponents):
         #             qml.PauliX(wires=j)
 
         # Get the shape of the image
-        
         height, width = inputs.shape
 
         n = int(np.log2(max(height, width)))
