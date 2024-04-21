@@ -80,6 +80,53 @@ def eneqr_encoding(image, n, q):
 
     return circuit
 
+def BRQI(image, n):
+    """
+    Represents a grayscale image using BRQI, where each bitplane is represented using NEQR.
+    
+    Args:
+        image (2D numpy array): The input grayscale image of size 2^n x 2^k.
+        n (int): The total number of qubits (n = n_x + k).
+        k (int): The number of qubits representing the y-axis.
+        
+    Returns:
+        qml.QNode: A QNode representing the BRQI state of the image.
+    """
+    dev = qml.device('default.qubit', wires=n+7)
+    
+    @qml.qnode(dev)
+    def circuit():
+        # Prepare the BRQI state
+        for wire in range(1,n+7):
+            qml.Hadamard(wires=wire)
+        for bitplane in range(8):
+            # Encode the bitplane using EFRQI
+            efrqi_circuit = efrqi_encoding(extract_bitplane(image, bitplane), n)
+            # print(np.array(qml.matrix(efrqi_circuit)()).shape)
+            efrqi_matrix = np.array(qml.matrix(efrqi_circuit)())
+            print(efrqi_matrix)
+            print(efrqi_matrix.shape)
+            qml.ctrl(qml.QubitUnitary(efrqi_matrix, wires=range(1, 2*n+2)), control=0)
+        return qml.state()
+    
+    return circuit
+
+def extract_bitplane(image, j_bitplane):
+    """
+    Extracts a bitplane from a grayscale image
+
+    Args:
+        image (2D numpy array): input image
+        j_bitplane (int): The index of the bitplane to extract (0-)
+
+    Returns:
+        2D numpy array: The extracted bitplane
+    """
+
+    bitplane_mask = 1 << j_bitplane
+    bitplane_image = ((image & bitplane_mask) >> j_bitplane).astype(np.uint8)
+    return bitplane_image
+
 #Load the MNIST dataset
 (_, _), (x_test, _) = mnist.load_data()
 
@@ -102,10 +149,11 @@ image = cv2.resize(image, (14, 14))
 H,W = image.shape
 print(image.shape)
 n = max(math.ceil(math.log2(H)), math.ceil(math.log2(W)))
-q = 8
-efrqi_circuit = efrqi_encoding(image, n)
+# q = 8
+# efrqi_circuit = efrqi_encoding(image, n)
+brqi_circuit = BRQI(image, n)
 
 #eneqr_circuit = eneqr_encoding(image, n, q)
 
 # Print the resulting quantum circuit
-print(qml.draw(efrqi_circuit, show_all_wires=True, wire_order=range(n))())
+print(qml.draw(brqi_circuit, show_all_wires=True, wire_order=range(n))())

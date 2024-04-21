@@ -6,6 +6,7 @@ from encoders.frqi import FRQI_for_2x2
 from encoders.frqi import FRQI_for_4x4
 from encoders.neqr import NEQR
 from encoders.neqr import NEQR_unoptimised
+from encoders.brqi import BRQI
 from calculations.random_layer import RandomLayer
 from measurements.uniform_gate import UniformGateMeasurements
 
@@ -20,6 +21,7 @@ circuit_dict = {
     "FRQI_for_4x4": FRQI_for_4x4,
     "NEQR": NEQR,
     "NEQR_unoptimised": NEQR_unoptimised,
+    "BRQI": BRQI,
     "RandomLayer": RandomLayer,
     "UniformGateMeasurements": UniformGateMeasurements
 }

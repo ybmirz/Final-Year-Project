@@ -90,6 +90,11 @@ EFRQI_2x2_params = {
     "out_channels": 9,  # depends on the encoding
 }
 
+BRQI_2x2_params = {
+    "encoder": "BRQI",
+    "filter_length": 2,
+    "out_channels": 10, 
+}
 
 trainables = [True, False]
 

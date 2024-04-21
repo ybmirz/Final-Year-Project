@@ -17,7 +17,7 @@ class NEQR(CircuitComponents):
         Input is expected to be a (filter_length x filter_length) tensor with values in [0,1],
         where filter_length == 2**n for some n.
     """
-
+    required_qubits = 0
     def __init__(self, q=8, filter_length=2):
         if not 2 ** int(np.log2(filter_length)) == filter_length:
             raise Exception ("filter_length needs to be equal to 2**n for some integer n.")
@@ -38,6 +38,8 @@ class NEQR(CircuitComponents):
         self.name = "NEQR"
 
         self.required_qubits = self.q + 2 * self.n
+        global required_qubits
+        required_qubits = self.required_qubits
 
     # Functions needed to construct the circuit.
     def wire(self, log_var):
@@ -310,6 +312,33 @@ class NEQR(CircuitComponents):
                 simpl_controls = espresso_exprs(Xor(*controls).to_dnf())
 
                 self.dnf_to_gates(simpl_controls[0], qubit)
+
+    def return_circuit(self, image=np.array([[]])):
+        @qml.qnode(qml.device("default.qubit", wires=required_qubits))
+        def circuit(self, image=image):
+            image = (image * (2 ** self.q - 1)).clone().detach().round()
+            # we assume the qubits start out in |0>.
+            for wire in range(2 * self.n):
+                qml.Hadamard(wires=self.q + wire)
+
+            coordinates = np.array(list(map(self.bin_list, range(2 ** self.n))))
+            binaries = [np.binary_repr(int(i), width=self.q) for i in image.flatten()]
+
+            for qubit in range(self.q):
+                toffolis = [i[qubit] for i in binaries]
+
+                controls = [And(*np.where(coordinates[i // 2 ** self.n], self.qubits_ev[-self.n:],
+                                        self.not_qubits_ev[-self.n:]).tolist(),
+                                *np.where(coordinates[i % (2 ** self.n)], self.qubits_ev[-(2 * self.n):-self.n],
+                                        self.not_qubits_ev[-(2 * self.n):-self.n]).tolist())
+                            for i in range(2 ** (2 * self.n)) if toffolis[i] == "1"]
+
+                if len(controls) > 0:
+                    simpl_controls = espresso_exprs(Xor(*controls).to_dnf())
+
+                    self.dnf_to_gates(simpl_controls[0], qubit)
+            return [qml.state()]
+        return circuit
 
 
 class NEQR_unoptimised(NEQR):
