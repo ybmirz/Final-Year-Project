@@ -84,11 +84,18 @@ SCMFRQI_2x2_params = {
     "out_channels": 3,  # depends on the encoding
 }
 
+EFRQI_2x2_params = {
+    "encoder": "EFRQI_for_2x2",
+    "filter_length": 2,
+    "out_channels": 9,  # depends on the encoding
+}
+
 
 trainables = [True, False]
 
 encoders = {
     "2x2": [
+        EFRQI_2x2_params,
         SCMFRQI_2x2_params,
         TRESHOLD_2x2_params,
         NEQR_2x2_params,
@@ -106,7 +113,7 @@ seeds = list(range(10))
 
 encoders_miru = {
     "2x2": [
-        SCMFRQI_2x2_params,
+        EFRQI_2x2_params,
     ]
 }
 

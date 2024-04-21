@@ -78,7 +78,7 @@ class QuonvLayer(nn.Module):
         print("debug", self.filter_size, self.stride, h,w,ch,h_out, out.shape)
         # Loop over the coordinates of the top-left pixel of 2X2 squares
         for qnode_inputs, b, j, k in self.convolve(img):
-            print(qnode_inputs)
+            #print(qnode_inputs)
             q_results = self.torch_qlayer(
                 qnode_inputs
             )
