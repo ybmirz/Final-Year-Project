@@ -100,6 +100,7 @@ trainables = [True, False]
 
 encoders = {
     "2x2": [
+        BRQI_2x2_params,
         EFRQI_2x2_params,
         SCMFRQI_2x2_params,
         TRESHOLD_2x2_params,
@@ -118,7 +119,7 @@ seeds = list(range(10))
 
 encoders_miru = {
     "2x2": [
-        EFRQI_2x2_params,
+        BRQI_2x2_params,
     ]
 }
 

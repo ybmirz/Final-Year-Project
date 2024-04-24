@@ -24,7 +24,7 @@ class BRQI(CircuitComponents):
 
         for bitplane in range(8):
             inputs = inputs.view(2,2)
-            bp = extract_bitplane(inputs, bitplane)
+            bp = self.extract_bitplane(inputs, bitplane)
             # Encode the bitplane using NEQR
             neqr_circuit = NEQR().return_circuit(bp, self.n)
             # print(np.array(qml.matrix(neqr_circuit)()).shape)
@@ -33,7 +33,7 @@ class BRQI(CircuitComponents):
             qml.ctrl(qml.QubitUnitary(neqr_matrix, wires=range(1, 2*self.n+2)), control=0)
         
 
-    def extract_bitplane(image, j_bitplane):
+    def extract_bitplane(self, image, j_bitplane):
         """
         Extracts a bitplane from a grayscale image
 

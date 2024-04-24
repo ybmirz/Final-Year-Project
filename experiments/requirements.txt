@@ -1,20 +1,23 @@
-Cython==0.29.21
+Cython
 jupyter
 numpy
 pandas<=1.2.3
 
-#-f https://download.pytorch.org/whl/torch_stable.html
-#torch==1.8.1+cpu
-torchvision==0.9.1
+# PyTorch (choose a compatible version from the list below)
+# -f https://download.pytorch.org/whl/torch_stable.html
+# torch==1.8.1+cpu  
+# torch==1.9.0+cpu 
+# torch
+torchvision
 
-pennylane==0.14.1
+pennylane
 
 qulacs-gpu
 PennyLane-qulacs
 
 PennyLane-qiskit==0.11.0
 qiskit==0.23.6
-qiskit-aer==0.7.5
+qiskit-aer
 qiskit-aqua==0.8.2
 qiskit-ibmq-provider==0.11.1
 qiskit-ignis==0.5.2
