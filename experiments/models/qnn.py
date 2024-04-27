@@ -36,7 +36,8 @@ class QNNModel(nn.Module):
         return self.linear(x)
 
     def draw_qlayer_circuit(self):
-        print(self.qlayer_1.qlayer.draw())
+        #print(self.qlayer_1.qlayer.draw())
+        qml.draw(self.qlayer_1.qlayer)
         print("---------------------------------------")
 
 

@@ -101,6 +101,8 @@ def BRQI(image, n):
             qml.Hadamard(wires=wire)
         for bitplane in range(8):
             # Encode the bitplane using EFRQI
+            print(image)
+            print(image.shape)
             efrqi_circuit = efrqi_encoding(extract_bitplane(image, bitplane), n)
             # print(np.array(qml.matrix(efrqi_circuit)()).shape)
             efrqi_matrix = np.array(qml.matrix(efrqi_circuit)())

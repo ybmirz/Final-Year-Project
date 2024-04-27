@@ -3,6 +3,7 @@ from pennylane import numpy as np
 from encoders.neqr import NEQR
 #import qiskit as qis
 from circuitcomponents import CircuitComponents
+import torch
 
 class BRQI(CircuitComponents):
     """
@@ -24,9 +25,10 @@ class BRQI(CircuitComponents):
 
         for bitplane in range(8):
             inputs = inputs.view(2,2)
+            inputs = (inputs * 255).type(torch.uint8)
             bp = self.extract_bitplane(inputs, bitplane)
             # Encode the bitplane using NEQR
-            neqr_circuit = NEQR().return_circuit(bp, self.n)
+            neqr_circuit = NEQR().return_circuit(bp, n=self.n)
             # print(np.array(qml.matrix(neqr_circuit)()).shape)
             # Represent the NEQR circuit as a Unitary operation
             neqr_matrix = np.array(qml.matrix(neqr_circuit)())

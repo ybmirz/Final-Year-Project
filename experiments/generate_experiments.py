@@ -96,6 +96,12 @@ BRQI_2x2_params = {
     "out_channels": 10, 
 }
 
+ENEQR_2x2_params = {
+    "encoder": "ENEQR_for_2x2",
+    "filter_length": 2,
+    "out_channels": 10,  # depends on the encoding
+}
+
 trainables = [True, False]
 
 encoders = {
@@ -119,7 +125,7 @@ seeds = list(range(10))
 
 encoders_miru = {
     "2x2": [
-        BRQI_2x2_params,
+        ENEQR_2x2_params
     ]
 }
 

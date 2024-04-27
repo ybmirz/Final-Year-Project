@@ -39,7 +39,7 @@ if __name__ == '__main__':
     # if experiments are defined in yaml-file, use these
     if len(sys.argv) > 1:
         with open(sys.argv[1], "r") as experiments_file:
-            experiments_definitions = yaml.load(experiments_file)
+            experiments_definitions = yaml.load(experiments_file, Loader=yaml.SafeLoader)
 
         experiment_names = list(experiments_definitions.keys())
         circuits = [experiments_definitions[key] for key in experiments_definitions.keys()]

@@ -8,16 +8,26 @@ RUN apt-get update && apt-get install -y \
 
 ADD experiments /experiments
 
-# RUN pip install --upgrade setuptools
-# RUN pip install --upgrade importlib_metadata
+RUN pip install --upgrade setuptools
+RUN pip install --upgrade importlib_metadata
+
+RUN git clone https://github.com/sunqm/libcint.git && \
+    cd libcint && \
+    mkdir build && cd build && \
+    cmake .. && \
+    make && \
+    make install
+
+# Set the environment variable for pyscf to find libcint
+ENV PYSCF_INC_DIR=/usr/local/lib
+
 # # Upgrade Cython
-# RUN pip install --upgrade cython
+RUN pip install --upgrade cython
 # RUN pip install --upgrade qulacs-gpu
 # RUN pip install --upgrade scikit-learn
 # RUN pip install --upgrade scipy
 # Install pyscf
-RUN pip install pyscf
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --use-pep517
 
 ADD tensorboard.conf /etc/supervisor/conf.d/tensorboard.conf
 

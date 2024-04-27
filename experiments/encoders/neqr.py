@@ -313,7 +313,10 @@ class NEQR(CircuitComponents):
 
                 self.dnf_to_gates(simpl_controls[0], qubit)
 
-    def return_circuit(self, image=np.array([[]])):
+    def return_circuit(self, image=np.array([[]]), n=required_qubits):
+        self.q = 1
+        self.n = n
+        required_qubits = 2 * n + self.q
         @qml.qnode(qml.device("default.qubit", wires=required_qubits))
         def circuit(self, image=image):
             image = (image * (2 ** self.q - 1)).clone().detach().round()

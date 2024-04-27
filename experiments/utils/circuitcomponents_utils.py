@@ -2,6 +2,7 @@ from encoders.threshold_encoder import Threshold_Encoder
 from encoders.scm_frqi import SCMFRQI_for_2x2
 from encoders.scm_frqi import SCMFRQI_for_4x4
 from encoders.efrqi import EFRQI
+from encoders.eneqr import ENEQR
 from encoders.frqi import FRQI_for_2x2
 from encoders.frqi import FRQI_for_4x4
 from encoders.neqr import NEQR
@@ -15,6 +16,7 @@ import pennylane as qml
 circuit_dict = {
     "Threshold_Encoder": Threshold_Encoder,
     "EFRQI_for_2x2": EFRQI,
+    "ENEQR_for_2x2": ENEQR,
     "SCMFRQI_for_2x2": SCMFRQI_for_2x2,
     "SCMFRQI_for_4x4": SCMFRQI_for_4x4,
     "FRQI_for_2x2": FRQI_for_2x2,

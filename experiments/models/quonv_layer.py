@@ -1,6 +1,6 @@
 import logging
 
-from qiskit import IBMQ
+#from qiskit import IBMQ
 
 import torch
 from torch import nn
