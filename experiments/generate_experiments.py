@@ -104,27 +104,31 @@ ENEQR_2x2_params = {
 
 trainables = [True, False]
 
-encoders = {
-    "2x2": [
-        BRQI_2x2_params,
-        EFRQI_2x2_params,
-        SCMFRQI_2x2_params,
-        TRESHOLD_2x2_params,
-        NEQR_2x2_params,
-        FRQI_2x2_params,
-    ],
+# encoders = {
+#     "2x2": [
+#         BRQI_2x2_params,
+#         EFRQI_2x2_params,
+#         SCMFRQI_2x2_params,
+#         TRESHOLD_2x2_params,
+#         NEQR_2x2_params,
+#         FRQI_2x2_params,
+#     ],
 
-    "4x4": [
-        TRESHOLD_4x4_params,
-        NEQR_4x4_params,
-        FRQI_4x4_params,
-    ]
-}
+#     "4x4": [
+#         TRESHOLD_4x4_params,
+#         NEQR_4x4_params,
+#         FRQI_4x4_params,
+#     ]
+# }
 
-seeds = list(range(10))
+seeds = list(range(2))
 
 encoders_miru = {
     "2x2": [
+        TRESHOLD_2x2_params,
+        NEQR_2x2_params,
+        FRQI_2x2_params,
+        EFRQI_2x2_params,
         ENEQR_2x2_params
     ]
 }
