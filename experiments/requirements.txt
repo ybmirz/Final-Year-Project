@@ -11,7 +11,7 @@ pyscf
 # torch
 torchvision
 
-pennylane
+pennylane==0.35.1
 
 qulacs-gpu
 PennyLane-qulacs

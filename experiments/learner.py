@@ -141,7 +141,8 @@ class Learner:
         df = pd.DataFrame.from_dict(record_dict)
         if os.path.isfile(results_file):
             df_prev = pd.read_csv(results_file)
-            df = df_prev.append(df, ignore_index=True)
+            #df = df_prev.append(df, ignore_index=True)
+            df = pd.concat([df_prev, df], ignore_index=True)
 
         df.to_csv(results_file, index=False)
 

@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 from torch import nn
-
+import pennylane as qml
 from models.quonv_layer import QuonvLayer
 from utils.circuitcomponents_utils import generate_corresponding_circuit, get_wires_number
 
@@ -37,7 +37,9 @@ class QNNModel(nn.Module):
 
     def draw_qlayer_circuit(self):
         #print(self.qlayer_1.qlayer.draw())
+        # TODO: need to fix the drawing - not working and showing the quonv layer
         qml.draw(self.qlayer_1.qlayer)
+        print(qml.draw(self.qlayer_1.qlayer)())
         print("---------------------------------------")
 
 
