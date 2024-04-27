@@ -1,6 +1,6 @@
 Cython
 jupyter
-numpy
+numpy==0.23.1
 pandas
 pyscf
 
