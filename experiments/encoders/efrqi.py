@@ -10,28 +10,47 @@ class EFRQI(CircuitComponents):
         if not filter_length == 2:
             raise Exception(f"This Encoding needs filter_length to be 2 not {filter_length}.")
         self.name = "EFRQI"
-        self.n = 4 # default 14x14 image input
+        self.n = 3 # default 14x14 image input
+        self.required_qubits = self.n
+
+    @staticmethod
+    def img_to_phi(image):
+        """
+        Convert grayscale image pixel values (normalized between 0 and 1) to phase angles in radians.
+        """
+        return np.pi * image
 
     def circuit(self, inputs):
-        print(inputs.shape)
-        inputs = inputs.view(2,2)
-        H,W = inputs.shape
-        self.n = max(math.ceil(math.log2(inputs)), math.ceil(math.log2(W)))
-        self.required_qubits = self.n * 2 + 1
+        # print(inputs.shape)
+        # inputs = inputs.view(2,2)
+        # H,W = inputs.shape
+        # self.n = max(math.ceil(math.log2(H)), math.ceil(math.log2(W)))
 
-        for wire in range(2*self.n):
-            qml.Hadamard(wires=wire)
+        self.required_qubits = self.n
+        phi_angles = self.img_to_phi(inputs)
 
-        for y in range(H):
-            for x in range(W):
-                pixel_value = inputs[y, x].item()
-                if pixel_value > 0:
-                    qml.RX(pixel_value/255*np.pi/2, wires=2*self.n)
-                else:
-                    qml.RX(0, wires=2*self.n)
+       # Apply Hadamard gates to all position qubits to prepare superposition
+        for i in range(self.required_qubits - 1):
+            qml.Hadamard(wires=i)
 
-                for i in range(2*self.n):
-                    qml.CNOT(wires=[i, 2*self.n])
+        # Apply controlled rotations based on the pixel values
+        for idx, phi in enumerate(phi_angles):
+            # Convert pixel index to binary and apply X gates to position qubits accordingly
+            binary_index = format(idx, f'0{self.required_qubits-1}b')
+            for qubit, bit in enumerate(binary_index):
+                if bit == '1':
+                    qml.PauliX(wires=qubit)
+
+            # Apply controlled rotation
+            control_wires = list(range(self.required_qubits - 1))
+            target_wire = self.required_qubits - 1
+            qml.ControlledPhaseShift(phi, wires=[control_wires[-1], target_wire])
+
+            # Reset position qubits for next iteration
+            for qubit, bit in enumerate(binary_index):
+                if bit == '1':
+                    qml.PauliX(wires=qubit)
+
 
         
 
