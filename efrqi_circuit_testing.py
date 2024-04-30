@@ -1,6 +1,7 @@
 import pennylane as qml
 from pennylane import numpy as np
 from tensorflow.keras.datasets import mnist
+import matplotlib.pyplot as plt
 import cv2
 
 # class EFRQI:
@@ -112,9 +113,16 @@ class EFRQI():
 x_train_normalized = _.astype('float32') / 255.0
 x_test_normalized = x_test.astype('float32') / 255.0
 
+
 #Choose a random image from the test set
 image = x_test[np.random.randint(0, len(x_test))]
 image = cv2.resize(image, (14, 14))
+
+# Display the image
+fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+
+ax[0].imshow(image, cmap='gray')
+ax[0].set_title('Input Image')
 
 # Retrieve the 2x2 filter part of image
 sub_image = qml.numpy.array(image[0:2, 0:2])
@@ -123,12 +131,24 @@ center_x, center_y = 14 // 2, 14 // 2
 sub_image = qml.numpy.array(image[center_x-1:center_x+1, center_y-1:center_y+1])
 sub_image = sub_image.astype('float32') / 255.0
 
+# Display the sub_image (2x2 convolution filter input)
+ax[1].imshow(sub_image, cmap='gray')
+ax[1].set_title('2x2 Quanvolutional Filter Input from the Centre')
+
+
 print(type(sub_image))
 sub_image = sub_image.flatten() # Flatten the image to a 1D array
 efrqi = EFRQI(num_qubits=3)  # Initialize EFRQI with enough qubits to encode the image
 circuit = efrqi.circuit(sub_image)  # Get the EFRQI circuit for the image
 quantum_state = circuit()  # Execute the circuit to get the quantum state
 print(qml.draw(circuit)())
+
+fig, ax = qml.draw_mpl(circuit)()
+# ax[2].set_title('Encoding Circuit')
+
+plt.tight_layout()
+plt.show()
+
 print(quantum_state)
 
 

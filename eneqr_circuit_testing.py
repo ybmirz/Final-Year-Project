@@ -2,6 +2,7 @@
 import pennylane as qml
 from pennylane import numpy as np
 from tensorflow.keras.datasets import mnist
+import matplotlib.pyplot as plt
 import cv2
 import math
 import torch
@@ -141,6 +142,11 @@ x_test_normalized = x_test.astype('float32') / 255.0
 image = x_test[np.random.randint(0, len(x_test_normalized))]
 image = cv2.resize(image, (14, 14))
 
+# Display the image
+fig, ax = plt.subplots(1, 2, figsize=(15, 5))
+
+ax[0].imshow(image, cmap='gray')
+ax[0].set_title('Input Image')
 
 # Retrieve the 2x2 filter part of image
 sub_image = qml.numpy.array(image[0:2, 0:2])
@@ -148,6 +154,10 @@ sub_image = qml.numpy.array(image[0:2, 0:2])
 center_x, center_y = 14 // 2, 14 // 2
 sub_image = qml.numpy.array(image[center_x-1:center_x+1, center_y-1:center_y+1])
 sub_image = sub_image.astype('float32') / 255.0
+
+# Display the sub_image (2x2 convolution filter input)
+ax[1].imshow(sub_image, cmap='gray')
+ax[1].set_title('2x2 Quanvolutional Filter Input from the Centre')
 
 print(type(sub_image))
 sub_image = sub_image.flatten()
@@ -165,3 +175,10 @@ eneqr_circuit = eneqr_encoding(sub_image)
 # Print the resulting quantum circuit
 print(qml.draw(eneqr_circuit, show_all_wires=True, wire_order=range(3))())
 print(qml.matrix(eneqr_circuit)())
+
+fig, ax = qml.draw_mpl(eneqr_circuit)()
+# ax[2].set_title('Encoding Circuit')
+
+plt.tight_layout()
+plt.show()
+
