@@ -25,6 +25,8 @@ class EFRQI(CircuitComponents):
         """
         Convert normalized image pixels directly to amplitudes.
         """
+        epsilon = 1e-8
+        img = img + epsilon  # Add epsilon to avoid division by zero 
         probabilities = img / np.sum(img)  # Normalize probabilities
         amplitudes = np.sqrt(probabilities)  # Square root to set amplitudes correctly
         return amplitudes
@@ -34,9 +36,10 @@ class EFRQI(CircuitComponents):
         # inputs = inputs.view(2,2)
         # H,W = inputs.shape
         # self.n = max(math.ceil(math.log2(H)), math.ceil(math.log2(W)))
-
+        inputs = inputs.flatten()
         self.required_qubits = self.n
-        phi_angles = self.img_to_phi(inputs)
+        qubits = list(range(self.required_qubits))
+        #phi_angles = self.img_to_phi(inputs)
         amplitudes = self.img_to_amplitudes(inputs)
 
     #    # Apply Hadamard gates to all position qubits to prepare superposition
@@ -61,7 +64,7 @@ class EFRQI(CircuitComponents):
     #             if bit == '1':
     #                 qml.PauliX(wires=qubit)
 
-        qml.QubitStateVector(amplitudes, wires=self.required_qubits[:-1])
+        qml.QubitStateVector(amplitudes, wires=qubits[:-1])
 
         # Apply gates to entangle the position with the intensity qubit
         for i in range(4):  # Assuming a 2x2 image
@@ -71,8 +74,8 @@ class EFRQI(CircuitComponents):
                     qml.PauliX(wires=idx)
 
             # Control the intensity qubit based on the position
-            qml.CNOT(wires=[self.required_qubits[1], self.required_qubitsits[2]])  # Use the second qubit as control
-            qml.CRY(2 * np.pi * amplitudes[i], wires=[self.required_qubits[0], self.required_qubits[2]])
+            qml.CNOT(wires=[qubits[1], qubits[2]])  # Use the second qubit as control
+            qml.CRY(2 * np.pi * amplitudes[i], wires=[qubits[0], qubits[2]])
 
             # Reset the position qubits
             for idx, bit in enumerate(binary_index):
