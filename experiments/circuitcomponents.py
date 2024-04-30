@@ -10,4 +10,3 @@ class CircuitComponents:
 
     def circuit(self, weights):
         pass
-SCMFRQI_for_2x2
