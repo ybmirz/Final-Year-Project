@@ -36,7 +36,7 @@ hyper_params = {
 
 }
 
-TRESHOLD_2x2_params = {
+THRESHOLD_2x2_params = {
     "encoder": "Threshold_Encoder",
     "filter_length": 2,
     "out_channels": 4,  # depends on the encoding
@@ -125,7 +125,7 @@ seeds = list(range(2))
 
 encoders_miru = {
     "2x2": [
-        TRESHOLD_2x2_params,
+        THRESHOLD_2x2_params,
         NEQR_2x2_params,
         FRQI_2x2_params,
         EFRQI_2x2_params,
