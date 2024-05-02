@@ -1,0 +1,7 @@
+pandas
+pennylane
+opencv-python
+matplotlib
+tensorflow
+numpy
+seaborn
